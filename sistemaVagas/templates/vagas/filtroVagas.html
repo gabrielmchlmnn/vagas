@@ -1,0 +1,58 @@
+<!-- Modal de Filtro -->
+<div class="modal fade" id="modalFiltroVagas" tabindex="-1" aria-labelledby="modalFiltroVagasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFiltroVagasLabel">Filtrar Vagas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formFiltroVagas" action="{% url 'filtrar_vagas' %}">
+                    <div class="mb-3">
+                        <label for="filtroDescricao" class="form-label">Descrição</label>
+                        <input type="text" class="form-control" id="filtroDescricao" name="filtroDescricao" placeholder="Digite uma descrição..." value="{{filtros.filtros.filtroDescricao}}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="filtroFaixaSalarial" class="form-label">Faixa Salarial</label>
+                        <select class="form-select" id="filtroFaixaSalarial" name="filtroFaixaSalarial">
+                            <option value="0">Todas</option>
+                            {% for value, label in faixa_salarios %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="filtroEscolaridade" class="form-label">Escolaridade</label>
+                        <select class="form-select" id="filtroEscolaridade" name="filtroEscolaridade">
+                            <option value="0">Todas</option>
+                            {% for value, label in escolaridades %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="filtroModalidade" class="form-label">Modalidade</label>
+                        <select class="form-select" id="filtroModalidade" name="filtroModalidade">
+                            <option value="0">Todas</option>
+                            {% for value, label in modalidades %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="filtroPCD" class="form-label">Pessoa com Deficiência (PCD)</label>
+                        <select class="form-select" id="filtroPCD" name="filtroPCD">
+                            <option value="0">Todas</option>
+                            <option value="True">Sim</option>
+                            <option value="False">Não</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-outline-primary btn-custom" id="btnAplicarFiltros">Aplicar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

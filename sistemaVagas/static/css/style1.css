@@ -1,0 +1,171 @@
+body {
+    background: linear-gradient(45deg, #439A97, #62B6B7, #97DECE, #CBEDD5); /* Gradiente inicial */
+    background-size: 300% 300%; /* Permite que o gradiente se mova */
+    animation: colorAnimation 20s ease infinite; /* Animação com timing linear */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', Arial, sans-serif;
+    color: #333;
+    margin: 0; /* Remove margem padrão */
+}
+
+@keyframes colorAnimation {
+    0% {
+        background-position: 0% 50%; /* Posição inicial */
+    }
+    50% {
+        background-position: 100% 50%; /* Movimento para a direita */
+    }
+    100% {
+        background-position: 0% 50%; /* Retorna ao início */
+    }
+}
+.chart-container {
+    margin: 20px auto;
+    max-width: 800px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.chart-title {
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.chart {
+    width: 100%;
+    height: 400px;
+}
+.navbar {
+    background: #fbffff !important;
+}
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: nowrap;
+    flex-direction: column-reverse;
+}
+
+.header-image {
+    height: 30px; 
+}
+
+.text-container {
+    width: 100%; /* Responsivo */
+    height: 65px;
+    overflow: hidden; /* Esconde texto fora do limite */
+    position: relative; /* Necessário para posicionamento absoluto */
+    display: flex;
+    align-items: center;
+}
+
+.text-slide {
+    position: absolute;
+    animation: slideText 8s linear infinite;
+    font-size: 1.5rem;
+    color: #008080; /* Turquesa */
+    font-weight: bold;
+    word-break: break-word; /* Permite quebra de palavras */
+    white-space: normal; /* Permite quebras de linha automáticas */
+}
+
+@keyframes slideText {
+    0% {
+        transform: translateX(230%); /* Começa fora da tela à direita */
+    }
+    40% {
+        transform: translateX(0%); /* Sai completamente pela esquerda */
+    }
+    70% {
+        transform: translateX(0%); /* Pausa na esquerda */
+    }
+    100% {
+        transform: translateX(-100%); /* Reinicia da direita */
+    }
+}
+
+.login-card {
+    background-color: #ffffff; /* Fundo branco */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.btn-turquoise {
+    background-color: #008080; /* Turquesa */
+    color: #ffffff;
+}
+
+.btn-turquoise:hover {
+    background-color: #005f5f; /* Turquesa mais escuro */
+}
+
+.register-link {
+    text-decoration: none;
+    color: #008080;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+.login_oueter {
+    width: 360px;
+    max-width: 100%;
+}
+.logo_outer{
+    text-align: center;
+}
+.logo_outer img{
+    width:120px;
+    margin-bottom: 40px;
+}
+
+.iti {
+    width: 100% !important; 
+}
+
+.alert-container {
+    position: fixed;
+    top: 0; /* Fixado no topo */
+    left: 0;
+    width: 100%; /* Ocupa toda a largura da tela */
+    z-index: 9999; /* Fica acima de outros elementos */
+    text-align: center; /* Centraliza o texto */
+    pointer-events: none; /* Evita interferir na interação com os elementos abaixo */
+}
+
+.alert {
+    display: inline-block;
+    margin: 0 auto;
+    pointer-events: auto; /* Permite interações apenas na mensagem */
+    padding: 15px;
+    margin-top: 10px; /* Remove margem adicional */
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 0; /* Remove bordas arredondadas */
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2); /* Adiciona sombra para destaque */
+    animation: slideDown 0.5s ease-out; /* Animação ao exibir */
+}
+
+/* Animação de entrada */
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+

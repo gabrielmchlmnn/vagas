@@ -1,0 +1,21 @@
+<!-- Modal de confirmação de deleção -->
+<div class="modal fade" id="inativarModal-{{ vaga.id }}" tabindex="-1" aria-labelledby="inativarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inativarModalLabel">Confirmar inativação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja inativar a vaga "<strong>{{ vaga.descricao }}</strong>"? Esta ação não pode ser desfeita.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="POST" action="{% url 'inativar_vaga' id=vaga.id %}" class="forminativar_vagas">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Inativar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="modal fade" id="modalCadastroVaga" tabindex="-1" aria-labelledby="modalCadastroVagaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title textTitle" id="modalCadastroVagaLabel">Cadastrar vaga</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-criar-vaga" action="{% url 'cadastrar_vaga' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <input type="text" class="form-control" id="descricao" name="descricao" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="faixaSalarial" class="form-label">Faixa Salarial</label>
+                        <select class="form-select" id="faixaSalarial" name="faixaSalarial" required>
+                            {% for value, label in faixa_salarios %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="requisitos" class="form-label">Requisitos</label>
+                        <textarea class="form-control" id="requisitos" name="requisitos" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="escolaridade" class="form-label">Escolaridade</label>
+                        <select class="form-select" id="escolaridade" name="escolaridade" required>
+                            {% for value, label in escolaridades %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalidade" class="form-label">Modalidade</label>
+                        <select class="form-select" id="modalidade" name="modalidade" required>
+                            {% for value, label in modalidades %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="indicadorPCD" class="form-label">Pessoa com Deficiência (PCD)</label>
+                        <select class="form-select" id="indicadorPCD" name="indicadorPCD">
+                            <option value="True">Sim</option>
+                            <option value="False">Não</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary">Cadastrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

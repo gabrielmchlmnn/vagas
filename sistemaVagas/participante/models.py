@@ -12,7 +12,8 @@ class Participante(models.Model):
     senha = models.CharField(max_length=128)  
     dataNascimento = models.DateField()
     dataAlteracao = models.DateTimeField(auto_now=True)  
-    
+    indicadorPCD = models.BooleanField(default=False)
+
     def __str__(self):
         return self.nome
     
@@ -21,9 +22,4 @@ class Participante(models.Model):
     
     def check_password(self, senhaDigitada):
         return check_password(senhaDigitada, self.senha)
-    
-    def clean(self):
-        super().clean()
-        if len(self.cpf) != 11:
-            raise ValidationError("CPF inválido!")
 

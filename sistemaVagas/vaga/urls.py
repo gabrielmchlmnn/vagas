@@ -2,6 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('vagas/', views.vagas, name='vagas'),
-    path('cadastrar-vagas/', views.cadastrarVaga, name='cadastroVaga'),
+    path('listar-vagas/', views.listar_vagas, name='vagas'),
+    path('cadastrar-vaga/', views.cadastrar_vaga, name='cadastrar_vaga'),
+    path('filtrar-vagas/', views.filtrar_vagas, name='filtrar_vagas'),
+    path('inativar-vaga/<int:id>/', views.inativar_vaga, name='inativar_vaga'),
+    path('editar-vaga/<int:id>/', views.editar_vaga, name='editar_vaga'),
 ]

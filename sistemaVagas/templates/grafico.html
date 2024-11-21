@@ -1,0 +1,76 @@
+<!-- Gráfico de Vagas Criadas -->
+<div class="chart-container">
+  <div class="chart-title">Vagas Criadas por Mês</div>
+  <div id="chartVagas" class="chart"></div>
+</div>
+
+<!-- Gráfico de Candidatos Recebidos -->
+<div class="chart-container">
+  <div class="chart-title">Candidatos Recebidos por Mês</div>
+  <div id="chartCandidaturas" class="chart"></div>
+</div>
+
+<!-- Script do gráfico -->
+<script>
+  am5.ready(function () {
+    // Dados (passando as variáveis de Django para o JS)
+    const vagasPorMes = JSON.parse('{{ dados_vagas|escapejs }}');
+    const candidaturasPorMes = JSON.parse('{{ dados_candidaturas|escapejs }}');
+
+    // Função para criar gráfico
+    function criarGrafico(rootId, data, titulo) {
+      const root = am5.Root.new(rootId);
+
+      root.setThemes([am5themes_Animated.new(root)]);
+
+      const chart = root.container.children.push(
+        am5xy.XYChart.new(root, {
+          layout: root.verticalLayout,
+          panX: false,
+          panY: false,
+          wheelX: "none",
+          wheelY: "none",
+        })
+      );
+
+      const xAxis = chart.xAxes.push(
+        am5xy.CategoryAxis.new(root, {
+          categoryField: "mes",
+          renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 30 }),
+        })
+      );
+      xAxis.data.setAll(data);
+
+      const yAxis = chart.yAxes.push(
+        am5xy.ValueAxis.new(root, {
+          renderer: am5xy.AxisRendererY.new(root, {}),
+          numberFormatter: am5.NumberFormatter.new(root, {
+            precision: 0,  
+          })
+        })
+      );
+
+      const series = chart.series.push(
+        am5xy.ColumnSeries.new(root, {
+          name: titulo,
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: "quantidade",
+          categoryXField: "mes",
+        })
+      );
+
+      series.columns.template.setAll({
+        tooltipText: "{categoryX}: {valueY}",
+        cornerRadiusTL: 5,
+        cornerRadiusTR: 5,
+      });
+
+      series.data.setAll(data);
+    }
+
+    // Criar gráficos
+    criarGrafico("chartVagas", vagasPorMes, "Vagas Criadas por Mês");
+    criarGrafico("chartCandidaturas", candidaturasPorMes, "Candidatos Recebidos por Mês");
+  });
+</script>

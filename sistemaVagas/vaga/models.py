@@ -35,3 +35,33 @@ class Vaga(models.Model):
     def __str__(self):
         return self.descricao
 
+    def getSalario(self):
+        """Retorna o valor mínimo da faixa salarial da vaga."""
+        if self.faixaSalarial == self.FaixasSalario.ATÉ_1000:
+            return 1000
+        elif self.faixaSalarial == self.FaixasSalario.DE_1000_A_2000:
+            return 1000
+        elif self.faixaSalarial == self.FaixasSalario.DE_2000_A_3000:
+            return 2000
+        elif self.faixaSalarial == self.FaixasSalario.ACIMA_DE_3000:
+            return 3000
+        return 0  # Caso não esteja em nenhuma faixa (não é comum)
+    
+    def verificaSalario(self, valor: float):
+        valorMinFaixa = self.getSalario()
+        if valor <= valorMinFaixa:
+            return 1
+        else:
+            return 0
+        
+    def inativar(self):
+        """
+        Método para inativar a vaga.
+        Define 'ativo' como False e 'dataInativacao' como a data atual.
+        """
+        if self.ativo:  # Apenas inativa se a vaga estiver ativa
+            self.ativo = False
+            self.dataInativacao = date.today()
+            self.save()  # Salva as alterações no banco de dados
+            return True
+        return False  # Retorna False se a vaga já estiver inativa

@@ -1,200 +1,209 @@
+# participante/views.py
+
+import json
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from phonenumbers import PhoneNumber
 from .models import Participante
+from django.contrib.auth import logout
 from django.contrib import messages
 from django.utils.dateparse import parse_date
-from django.contrib.auth.hashers import make_password,check_password
+from django.contrib.auth.hashers import make_password, check_password
 import re
 from datetime import date
 from phonenumbers import parse, is_valid_number
 from dateutil.relativedelta import relativedelta
-from sistemaVagas.decorators import login_required  # Importa o decorador
-from django.contrib.auth import authenticate
+from sistemaVagas.decorators import login_required, admin_required
 from django.contrib.auth.models import User
 from django.db.models import Model
 from validate_docbr import CPF
-# Create your views here.
+from django.http import JsonResponse
+from datetime import datetime
+from vaga.models import Vaga
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
+import locale
+from candidatura.models import Candidatura
 
-
+# Lógica de login
 def login_view(request):
-    request.session['ultimaTentativaLogon'] = ''
     if request.method == 'POST':
-        # Lógica para processar o login
-        email = request.POST['email']
-        senha = request.POST['senha']
-        ultimaTentativa = {
-            'email':email ,
-            'senha':senha
-        }
-        request.session['ultimaTentativa'] = ultimaTentativa   
-        try:
-            # Verifica se o e-mail existe no banco
-            participante = autenticaModelo(Participante,email,senha) 
-            if participante is not None:
-                request.session['participanteId'] = participante.id
-                request.session['isSuperUser'] = False
-                return redirect("inicial_page")
-            else:
-                # Caso não seja um Participante, tenta autenticar no modelo User
-                usuario = autenticaModelo(User,email,senha)
-                if usuario is not None:
-                    request.session['participanteId'] = usuario.id
-                    request.session['isSuperUser'] = True
-                    return redirect("inicial_page")
-                else:
-                    # Nenhum dos modelos foi autenticado
-                    messages.error(request, 'Credenciais inválidas!')
-                    return redirect("login")
-        except Exception as e:
-            print(f"Erro ao efetuar login --> {e}")
-            messages.error(request, 'Não foi possível efetuar o login!')
-            return redirect("login")
-    else:
-        ultimaTentativa = request.session.get('ultimaTentativa', {})
-        context = {}
-        if isinstance(ultimaTentativa, dict):
-            context = {
-                'nome': ultimaTentativa.get('nome'),
-                'cpf': ultimaTentativa.get('cpf'),
-                'celular': ultimaTentativa.get('celular'),
-                'codigoPais': ultimaTentativa.get('codigoPais'),
-                'email': ultimaTentativa.get('email'),
-                'senha': ultimaTentativa.get('senha'),
-                'confirmSenha': ultimaTentativa.get('confirmSenha'),
-                'dataNascimento': ultimaTentativa.get('dataNascimento')
-            }
-        return render(request, 'participante/login.html',context=context)
-
-@login_required
-def inicial_page(request):
-    return render(request, 'participante/index.html')
-
-
-def logon_view(request):
-    request.session['ultimaTentativa'] = ''
-    if request.method == 'POST':
-        # Lógica para processar o logon
-        nome = request.POST['nome'].strip()
-        cpf = request.POST['cpf'].strip()
-        celular = request.POST['celular'].replace(' ','')
-        codigoPais = request.POST['codigoPais'].strip()
         email = request.POST['email'].strip()
         senha = request.POST['senha'].strip()
-        confirmSenha = request.POST['confirmSenha'].strip()
-        dataNascimento = request.POST['dataNascimento'].strip()
-        ultimaTentativaLogon = {
-            'nome':nome,
-            'cpf':cpf ,
-            'celular':celular ,
-            'codigoPais':codigoPais ,
-            'email':email ,
-            'senha':senha ,
-            'confirmSenha':confirmSenha,
-            'dataNascimento':dataNascimento
-        }
-        request.session['ultimaTentativaLogon'] = ultimaTentativaLogon   
-     
-        if senha != confirmSenha:
-            messages.error(request, 'As senhas não coincidem!')
-            return redirect('logon')
-        
-        participantes = Participante.objects.filter(email=email)
+        ultima_tentativa = {'email': email, 'senha': senha}
+        request.session['ultima_tentativa'] = ultima_tentativa
 
-        if participantes.exists():
-            messages.error(request, 'Email já cadastrado!')
-            return redirect('logon')
-        
-        validation = CPF()
-        if validation.validate(cpf) == False:
-            messages.error(request, 'CPF inválido!')
-            return redirect('logon')
-
-        cpf = re.sub(r'[.-]', '', cpf)  
-        participantes = Participante.objects.filter(cpf=cpf)
-
-        if participantes.exists():
-            messages.error(request, 'CPF já cadastrado!')
-            return redirect('logon')
-        
-
-        data_atual = date.today()
-        dataNascimento = parse_date(dataNascimento)
-        if (relativedelta(data_atual, dataNascimento).years < 14):
-            messages.error(request, 'A idade mínima para cadastro é 14 anos!')
-            return redirect('logon')
         try:
-            # Formatar o número do celular corretamente
-            celular = re.sub(r'[()-]', '', celular)  
-            celularFormatado = f"+{codigoPais}{celular}"
+            usuario = autentica_usuario(email, senha, True)
+            if usuario:
+                request.session['participante_id'] = usuario.id
+                request.session['is_superuser'] = True
+                return redirect("dashboard")
+            else:
+                participante = autentica_usuario(email, senha, False)
+                if participante:
+                    request.session['participante_id'] = participante.id
+                    request.session['is_superuser'] = False
+                    return redirect("vagas")
+                else:
+                    raise Exception('Credenciais inválidas!')
+        except Exception as e:
+            messages.error(request, f'{e}')
+            return redirect('login')
+    else:
+        ultima_tentativa = request.session.get('ultima_tentativa', {})
+        context = {
+            'nome': ultima_tentativa.get('nome', ''),
+            'cpf': ultima_tentativa.get('cpf', ''),
+            'celular': ultima_tentativa.get('celular', ''),
+            'codigo_pais': ultima_tentativa.get('codigoPais', ''),
+            'email': ultima_tentativa.get('email', ''),
+            'senha': ultima_tentativa.get('senha', ''),
+            'confirm_senha': ultima_tentativa.get('confirm_senha', ''),
+            'data_nascimento': ultima_tentativa.get('data_nascimento', '')
+        }
+        return render(request, 'participante/login.html', context=context)
 
-            # Criar o novo participante
+@login_required
+@admin_required
+def dashboard(request):
+    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+    vagas_por_mes = (
+        Vaga.objects
+        .annotate(mes=TruncMonth('dataPublicacao'))
+        .values('mes')
+        .annotate(quantidade=Count('id'))
+        .order_by('mes')
+    )
+    candidaturas_por_mes = (
+        Candidatura.objects
+        .annotate(mes=TruncMonth('dataInscricao'))
+        .values('mes')
+        .annotate(quantidade=Count('id'))
+        .order_by('mes')
+    )
+
+    dados_vagas = [
+        {
+            'mes': mes_data['mes'].strftime('%B/%Y').capitalize(),
+            'quantidade': mes_data['quantidade']
+        }
+        for mes_data in vagas_por_mes
+    ]
+
+    dados_candidaturas = [
+        {
+            'mes': mes['mes'].strftime('%B/%Y').capitalize(),
+            'quantidade': mes['quantidade']
+        }
+        for mes in candidaturas_por_mes
+    ]
+
+    context = {
+        'dados_vagas': json.dumps(dados_vagas),
+        'dados_candidaturas': json.dumps(dados_candidaturas),
+        'superUser': True
+    }
+    return render(request, 'dashboard.html', context=context)
+
+def logon_view(request):
+    if request.method == 'POST':
+        nome = request.POST['nome'].strip()
+        cpf = request.POST['cpf'].strip()
+        celular = request.POST['celular'].strip()
+        codigo_pais = request.POST['codigoPais'].strip()
+        email = request.POST['email'].strip()
+        senha = request.POST['senha'].strip()
+        confirm_senha = request.POST['confirm_senha'].strip()
+        data_nascimento = request.POST['data_nascimento'].strip()
+        indicador_pcd = request.POST['indicadorPCD'].strip() == 'True'
+
+        ultima_tentativa_logon = {
+            'nome': nome,
+            'cpf': cpf,
+            'celular': celular,
+            'codigo_pais': codigo_pais,
+            'email': email,
+            'senha': senha,
+            'confirm_senha': confirm_senha,
+            'data_nascimento': data_nascimento,
+            'indicador_pcd':indicador_pcd
+        }
+        request.session['ultima_tentativa_logon'] = ultima_tentativa_logon
+
+        try:
+            celular = celular.replace(' ', '')
+            if nome.isdigit():
+                raise Exception('Nome inválido!')
+            if len(celular) != 14:
+                raise Exception('Celular inválido!')
+
+            if senha != confirm_senha:
+                raise Exception('As senhas não coincidem!')
+
+            if Participante.objects.filter(email=email).exists() or User.objects.filter(email=email).exists():
+                raise Exception('Email já cadastrado!')
+
+            if not CPF().validate(cpf):
+                raise Exception('CPF inválido!')
+
+            cpf = re.sub(r'[.-]', '', cpf)
+            if Participante.objects.filter(cpf=cpf).exists():
+                raise Exception('CPF já cadastrado!')
+
+            data_nascimento = parse_date(data_nascimento)
+            if relativedelta(date.today(), data_nascimento).years < 14:
+                raise Exception('A idade mínima para cadastro é 14 anos!')
+
+            celular_formatado = f"+{codigo_pais}{re.sub(r'[()-]', '', celular)}"
+
+            # Cria o novo participante
             Participante.objects.create(
                 nome=nome,
                 cpf=cpf,
-                celular=celularFormatado,
+                celular=celular_formatado,
                 email=email,
-                senha=make_password(senha), 
-                dataNascimento=dataNascimento
+                senha=make_password(senha),
+                dataNascimento=data_nascimento,
+                indicadorPCD=indicador_pcd
             )
             messages.success(request, 'Cadastro realizado com sucesso!')
-            request.session['ultimaTentativaLogon'] = ''
-            return redirect('login')  # Redireciona para a página de login após o cadastro
+            request.session['ultima_tentativa_logon'] = ''
+            return redirect('login')
         except Exception as e:
-            print(e)
-            messages.error(request, f'Erro ao criar participante: {e}')           
+            messages.error(request, f'{e}')
             return redirect('logon')
     else:
-        ultimaTentativaLogon = request.session.get('ultimaTentativaLogon')
-        context = {}
-
-        if isinstance(ultimaTentativaLogon, dict):
-            context = {
-                'nome': ultimaTentativaLogon.get('nome'),
-                'cpf': ultimaTentativaLogon.get('cpf'),
-                'celular': ultimaTentativaLogon.get('celular'),
-                'codigoPais': ultimaTentativaLogon.get('codigoPais'),
-                'email': ultimaTentativaLogon.get('email'),
-                'senha': ultimaTentativaLogon.get('senha'),
-                'confirmSenha': ultimaTentativaLogon.get('confirmSenha'),
-                'dataNascimento': ultimaTentativaLogon.get('dataNascimento')
-            }
-
-        return render(request, 'participante/logon.html',context=context)
-
+        ultima_tentativa_logon = request.session.get('ultima_tentativa_logon', {})
+        context = {
+            'nome': ultima_tentativa_logon.get('nome',''),
+            'cpf': ultima_tentativa_logon.get('cpf'),
+            'celular': ultima_tentativa_logon.get('celular'),
+            'codigo_pais': ultima_tentativa_logon.get('codigo_pais'),
+            'email': ultima_tentativa_logon.get('email'),
+            'senha': ultima_tentativa_logon.get('senha'),
+            'confirm_senha': ultima_tentativa_logon.get('confirm_senha'),
+            'data_nascimento': ultima_tentativa_logon.get('data_nascimento')
+        }
+        return render(request, 'participante/logon.html', context=context)
 
 def logout_view(request):
-    if 'participanteId' in request.session:
-        del request.session['participanteId']
-    if 'ultimaTentativa' in request.session:
-        del request.session['ultimaTentativa']
-    return redirect('login')  
+    request.session.flush()
+    logout(request)
+    return redirect('login')
 
-
-def autenticaModelo(modelo: Model, email: str, senha: str):
+def autentica_usuario(email: str, senha: str, is_superuser: bool):
     try:
-        # Nome do modelo (para depuração)
-        print(f"Modelo: {modelo.__name__}")    
-        print(f"Email: {email}")
-
-        # Busca o objeto pelo e-mail
-        entidade = modelo.objects.get(email=email)
-        print("caiu 1")
-
-        # Identifica o campo correto para a senha
-        senhaSalva = entidade.password if modelo.__name__ == 'User' else entidade.senha
-
-        # Verifica a senha
-        if check_password(senha, senhaSalva):
-            return entidade
+        if is_superuser:
+            usuario = User.objects.get(email=email)
+            senha_salva = usuario.password
         else:
-            print("caiu 2")
-            return None
-
-    except modelo.DoesNotExist:
-        print("Email não encontrado.")
+            usuario = Participante.objects.get(email=email)
+            senha_salva =  usuario.senha    
+        
+        if check_password(senha, senha_salva):
+            return usuario
         return None
-
-    except Exception as e:
-        print(f"Erro inesperado: {e}")
+    except Exception:
         return None

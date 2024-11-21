@@ -1,15 +1,58 @@
-{% if vagas %}
-    {% for vaga in vagas %}
-        <a href="#" class="list-group-item list-group-item-action">
-            <h5 class="mb-1">{{ vaga.descricao }}</h5>
-            <p class="mb-1"><strong>Faixa Salarial:</strong> {{ vaga.get_faixaSalarial_display }}</p>
-            <p class="mb-1"><strong>Requisitos:</strong> {{ vaga.requisitos|linebreaksbr }}</p>
-            <p class="mb-1"><strong>Escolaridade:</strong> {{ vaga.get_escolaridade_display }}</p>
-            <p class="mb-1"><strong>Modalidade:</strong> {{ vaga.get_modalidade_display }}</p>
-            <p class="mb-1"><strong>Inclui PCD?</strong> {{ vaga.indicadorPCD|yesno:"Sim,Não" }}</p>
-            <small>Data de Publicação: {{ vaga.dataPublicacao|date:"d/m/Y" }}</small>
-        </a>
-    {% endfor %}
-{% else %}
-    <p class="text-center">Não há vagas disponíveis no momento.</p>
+<div class="list-group" id="vagas-lista">
+    {% if vagas %}
+        {% for vaga in vagas %}
+            {% if superUser == True %}
+                <a href="#" class="list-group-item list-group-item-action">
+            {% else %}
+                <a href="#" class="list-group-item list-group-item-action" 
+                data-bs-toggle="modal" data-bs-target="#modalVaga-{{ vaga.id }}"
+                data-faixa-salarial="{{ vaga.faixaSalarial }}"
+                data-escolaridade="{{ vaga.escolaridade }}"
+                data-modalidade="{{ vaga.modalidade }}"
+                data-pcd="{{ vaga.indicadorPCD }}">
+            {% endif %}
+            
+                <!-- Logo da empresa -->
+                <div class="d-flex align-items-center mb-3">
+                    <img src="/static/img/icon-logo.png" alt="Logo da Empresa" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                    <h5 class="mb-1">{{ vaga.descricao }}</h5>
+                </div>
+                <p class="mb-1"><strong>Faixa Salarial:</strong> {{ vaga.get_faixaSalarial_display }}</p>
+                <p class="mb-1"><strong>Requisitos:</strong> {{ vaga.requisitos|linebreaksbr }}</p>
+                <p class="mb-1"><strong>Escolaridade:</strong> {{ vaga.get_escolaridade_display }}</p>
+                <p class="mb-1"><strong>Modalidade:</strong> {{ vaga.get_modalidade_display }}</p>
+                <p class="mb-1"><strong>Inclui PCD?</strong> {{ vaga.indicadorPCD|yesno:"Sim,Não" }}</p>
+                <p class="mb-1"><strong>Inscrições:</strong> {{ vaga.qtd_participantes }}</p>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <small>Data de Publicação: {{ vaga.dataPublicacao|date:"d/m/Y" }}</small>
+                    {% if sessao and superUser == True %}
+                        <div>
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal-{{ vaga.id }}">
+                                Editar
+                            </button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#inativarModal-{{ vaga.id }}">
+                                Inativar
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </a>
+            {% if sessao and superUser == True %}
+                {% include 'vagas/editarVagas.html' %}
+                {% include 'vagas/inativarVagas.html' %}
+            {% endif %}
+            {% if sessao and superUser == False %}
+                {% include 'candidatura/cadastroCandidaturaForm.html' %}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p class="text-center">Não há vagas disponíveis no momento.</p>
+    {% endif %}
+</div>
+
+{% if sessao == False %}
+    <div class="text-center mt-3">
+        <a href="{% url 'logon' %}" class="register-link">Cadastre-se para se candidatar</a>
+    </div>
 {% endif %}

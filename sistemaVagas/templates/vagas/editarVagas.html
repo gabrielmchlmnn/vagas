@@ -1,0 +1,50 @@
+<div class="modal fade" id="editModal-{{ vaga.id }}" tabindex="-1" aria-labelledby="editModalLabel-{{ vaga.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel-{{ vaga.id }}">Editar Vaga: {{ vaga.descricao }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'editar_vaga' id=vaga.id %}" method="POST" class="editar_vaga">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="descricao-{{ vaga.id }}" class="form-label">Descrição</label>
+                        <input type="text" class="form-control" id="descricao-{{ vaga.id }}" name="descricao" value="{{ vaga.descricao }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="faixaSalarial-{{ vaga.id }}" class="form-label">Faixa Salarial</label>
+                        <select class="form-select" id="faixaSalarial-{{ vaga.id }}" name="faixaSalarial" required>
+                            {% for value, label in faixa_salarios %}
+                                <option value="{{ value }}" {% if vaga.faixaSalarial == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>                    
+                    </div>
+                    <div class="mb-3">
+                        <label for="requisitos" class="form-label">Requisitos</label>
+                        <textarea class="form-control" id="requisitos" name="requisitos" rows="3" required>{{ vaga.requisitos }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="escolaridade-{{ vaga.id }}" class="form-label">Escolaridade</label>
+                        <select class="form-select" id="escolaridade-{{ vaga.id }}" name="escolaridade">
+                            {% for value, label in escolaridades %}
+                                <option value="{{ value }}" {% if vaga.escolaridade == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalidade-{{ vaga.id }}" class="form-label">Modalidade</label>
+                        <select class="form-select" id="modalidade-{{ vaga.id }}" name="modalidade">
+                            {% for value, label in modalidades %}
+                                <option value="{{ value }}" {% if vaga.modalidade == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Salvar alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

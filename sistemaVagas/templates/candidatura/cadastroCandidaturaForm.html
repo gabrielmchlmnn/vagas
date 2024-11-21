@@ -1,0 +1,39 @@
+<div class="modal fade" id="modalVaga-{{ vaga.id }}" tabindex="-1" aria-labelledby="modalVagaLabel-{{ vaga.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title textTitle" id="modalVagaLabel-{{ vaga.id }}">Candidatar-se à vaga: {{ vaga.descricao }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'cadastroCandidatura' id=vaga.id %}" class="cadastroCandidatura">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="pretensaoSalarial-{{ vaga.id }}" class="form-label">Pretensão Salarial (R$)</label>
+                        <input type="text" class="form-control pretensaoSalarial" id="pretensaoSalarial-{{ vaga.id }}" name="pretensaoSalarial" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="disponivel-{{ vaga.id }}" name="disponivel" value="True">
+                        <label class="form-check-label" for="disponivel-{{ vaga.id }}">Estou disponível para início imediato</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ultimaEscolaridade-{{ vaga.id }}" class="form-label">Última Escolaridade</label>
+                        <select class="form-select" id="ultimaEscolaridade-{{ vaga.id }}" name="ultimaEscolaridade" required>
+                            {% for escolha in vaga.Escolaridade.choices %}
+                                <option value="{{ escolha.0 }}">{{ escolha.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="experiencia-{{ vaga.id }}" class="form-label">Experiência</label>
+                        <textarea class="form-control" id="experiencia-{{ vaga.id }}" name="experiencia" rows="3" required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Candidatar-se</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

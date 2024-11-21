@@ -23,5 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('participante.urls')),  # Inclua as rotas do app participante
     path('', include('vaga.urls')),  # Inclua as rotas do app vaga
+    path('', include('candidatura.urls')),  # Inclua as rotas do app vaga
 
 ]

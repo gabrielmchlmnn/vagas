@@ -1,35 +1,45 @@
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <div class="container-fluid">
+  <div class="container-fluid">
       <!-- Logo ou título -->
-      <a class="navbar-brand" href="/inicial">
-        <img src="/static/img/logo.png" alt="Logo" class="header-image" height="30px">
+      {% if superUser == True %}
+
+            <a class="navbar-brand" href="/dashboard">
+       {%else%}
+            <a class="navbar-brand" href="/listar-vagas">
+
+       {%endif%}
+
+          <img src="/static/img/logo.png" alt="Logo" class="header-image" height="30px">
       </a>
-  
-      <!-- Toggle para dispositivos móveis -->
+
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon"></span>
       </button>
-  
+
       <!-- Itens da navBar -->
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <!-- Link para as vagas -->
-          <li class="nav-item">
-            <a class="nav-link" href="/vagas">Vagas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/vagas">Minhas candidaturas</a>
-          </li>
-          <!-- Botão de logout -->
-          <li class="nav-item">
-            <a class="nav-link" href="/logout">Logout</a>
-          </li>
-        </ul>
+          <ul class="navbar-nav ms-auto">
+              <!-- Link para as vagas -->
+              {% if superUser == True %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/listar-vagas">
+                        Vagas
+                    </a>
+                </li>
+              {%endif%}
+
+              <!-- Botão de logout -->
+              <li class="nav-item">
+                  <a class="nav-link" href="/logout">
+                      Sair
+                  </a>
+              </li>
+          </ul>
       </div>
-    </div>
-  </nav>
-  
-  <div class="container mt-2 pt-5">
-    <!-- O restante do conteúdo -->
+  </div>
+</nav>
+
+<div class="container mt-2">
 </div>
-  
