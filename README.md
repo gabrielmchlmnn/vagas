@@ -26,10 +26,9 @@
    pip install -r requirements.txt
    ```
 
-4. **Configurar o Banco de Dados**:  
+4. **Entrar na pasta do projeto**:  
    ```bash
-   python manage.py makemigrations
-   python manage.py migrate
+   cd sistemaVagas
    ```
 
 5. **Rodar o sistema**:  
