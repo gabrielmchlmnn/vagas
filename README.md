@@ -6,7 +6,7 @@
 1. **Clonar o repositório**:  
    ```bash
    git clone https://github.com/gabrielmchlmnn/vagas.git
-   cd vagas
+   cd sistemaVagas
    ```
 
 2. **Ativar ambiente virtual**:  
