@@ -129,6 +129,11 @@ STATICFILES_DIRS = [
 # Diretório onde os arquivos estáticos serão coletados ao rodar o comando 'collectstatic'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+USE_L10N = True
+USE_THOUSAND_SEPARATOR = True
+NUMBER_GROUPING = 3
+DECIMAL_SEPARATOR = ','
+THOUSAND_SEPARATOR = '.'
 
 
 # Default primary key field type

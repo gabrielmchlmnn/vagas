@@ -1,0 +1,34 @@
+<!-- Modal de Consultar Inscrições -->
+<div class="modal fade" id="consultarInscricoesModal-{{ vaga.id }}" tabindex="-1" aria-labelledby="consultarInscricoesLabel-{{ vaga.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="consultarInscricoesLabel-{{ vaga.id }}">Inscrições para: {{ vaga.descricao }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                {% with vaga.candidaturas.all as candidaturas %}
+                    {% if candidaturas %}
+                        <ul class="list-group">
+                            {% for candidatura in candidaturas %}
+                                <li class="list-group-item">
+                                    <strong>Nome:</strong> {{ candidatura.participanteId.nome }}<br>
+                                    <strong>CPF:</strong> {{ candidatura.participanteId.format_cpf }}<br>
+                                    <strong>Email:</strong> {{ candidatura.participanteId.email }}<br>
+                                    <strong>Celular:</strong> {{ candidatura.participanteId.celular }}<br>
+                                    <strong>Escolaridade:</strong> {{ candidatura.get_escolaridade_display }}<br>
+                                    <strong>Status:</strong> {{ candidatura.get_status_display }}<br>
+                                    <strong>Pretensão Salarial:</strong> R$ {{ candidatura.format_pretensao_salarial }}<br>
+                                    <strong>Disponibilidade Imediata:</strong> {{ candidatura.disponibilidadeImediata|yesno:"Sim,Não" }}<br>
+                                    <strong>Pontos:</strong> {{ candidatura.format_pontos }}<br>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center">Nenhum participante inscrito para esta vaga.</p>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</div>

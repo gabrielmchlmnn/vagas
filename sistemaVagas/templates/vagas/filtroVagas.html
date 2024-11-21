@@ -7,17 +7,18 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formFiltroVagas" action="{% url 'filtrar_vagas' %}">
+                <form id="formFiltroVagas" action="{% url 'vagas' %}" method="POST">
+                    {% csrf_token %}
                     <div class="mb-3">
                         <label for="filtroDescricao" class="form-label">Descrição</label>
-                        <input type="text" class="form-control" id="filtroDescricao" name="filtroDescricao" placeholder="Digite uma descrição..." value="{{filtros.filtros.filtroDescricao}}">
+                        <input type="text" class="form-control" id="filtroDescricao" name="filtroDescricao" placeholder="Digite uma descrição..." value="{{filtros.filtroDescricao}}">
                     </div>
                     <div class="mb-3">
                         <label for="filtroFaixaSalarial" class="form-label">Faixa Salarial</label>
                         <select class="form-select" id="filtroFaixaSalarial" name="filtroFaixaSalarial">
                             <option value="0">Todas</option>
                             {% for value, label in faixa_salarios %}
-                                <option value="{{ value }}">{{ label }}</option>
+                                <option value="{{ value }}" {% if filtros.filtroFaixaSalarial == value %}selected{% endif %}>{{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -26,7 +27,7 @@
                         <select class="form-select" id="filtroEscolaridade" name="filtroEscolaridade">
                             <option value="0">Todas</option>
                             {% for value, label in escolaridades %}
-                                <option value="{{ value }}">{{ label }}</option>
+                                <option value="{{ value }}" {% if filtros.filtroEscolaridade == value %}selected{% endif %}>{{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -35,7 +36,7 @@
                         <select class="form-select" id="filtroModalidade" name="filtroModalidade">
                             <option value="0">Todas</option>
                             {% for value, label in modalidades %}
-                                <option value="{{ value }}">{{ label }}</option>
+                                <option value="{{ value }}" {% if filtros.filtroModalidade == value %}selected{% endif %}>{{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -43,8 +44,8 @@
                         <label for="filtroPCD" class="form-label">Pessoa com Deficiência (PCD)</label>
                         <select class="form-select" id="filtroPCD" name="filtroPCD">
                             <option value="0">Todas</option>
-                            <option value="True">Sim</option>
-                            <option value="False">Não</option>
+                            <option value="True" {% if filtros.filtroIndicadorPcd == 'True'%}selected{% endif %}>Sim</option>
+                            <option value="False" {% if filtros.filtroIndicadorPcd == 'False' %}selected{% endif %}>Não</option>
                         </select>
                     </div>
                     <div class="modal-footer">

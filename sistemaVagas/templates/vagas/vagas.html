@@ -67,8 +67,17 @@
     </div>
 
     <script>
-        $(document).ready(function () {
 
+        window.onload = function () {
+            // Obtém a URL base (sem os parâmetros de consulta)
+            const urlBase = window.location.href.split('?')[0];
+
+            // Atualiza o histórico do navegador, removendo os parâmetros de consulta
+            window.history.replaceState(null, '', urlBase);
+        };
+        
+        $(document).ready(function () {
+            
             // Remover mensagens automaticamente após 3 segundos
             setTimeout(() => $(".alert").fadeOut("fast"), 3000);
 
@@ -83,56 +92,27 @@
                 }
                 return true;
             }
-            $('#formFiltroVagas').on('submit', function (event) {
-                event.preventDefault();
+            // Manipular envio de formulários
+            $('form').not('#formFiltroVagas').on('submit', function (e) {
+                e.preventDefault(); // Impede envio imediato do formulário
 
-                let form = $(this);
-                let url = form.attr('action');
-                let formData = form.serialize();
+                // Obtém todos os campos do formulário de filtros
+                const camposFiltros = $('#formFiltroVagas').serializeArray().filter(campo => campo.name !== 'csrfmiddlewaretoken');
 
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    data: formData,
-                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-                    success: function (response) {
-                        $('#vagas-lista').html(response.vagas);
-                        $('#modalFiltroVagas').modal('hide');
-                    },
-                    error: function (error) {
-                        const errorMessage = error.responseJSON?.erro || 'Não foi possível filtrar as vagas!';
-                        $('#message')
-                            .text(errorMessage)
-                            .removeClass('alert-success')
-                            .addClass('alert-danger')
-                            .fadeIn();
-                        setTimeout(() => $('#message').fadeOut(), 3000);
-                    }
-                });
-            });
-            // Para todos os formulários, exceto o de filtros
-            $('form').not('#formFiltroVagas').submit(function(e) {
-                e.preventDefault(); // Impede o envio imediato do formulário
-
-                // Obtém os campos do formulário secundário
-                var camposSecundarios = $(this).find('input');
-
-                // Adiciona os campos do formulário secundário ao formulário principal
-                camposSecundarios.each(function() {
-                    // Cria um novo campo de input com os valores do formulário secundário
-                    var novoCampo = $('<input>')
-                        .attr('type', $(this).attr('type'))
-                        .attr('name', $(this).attr('name'))
-                        .val($(this).val());
-
-                    // Adiciona o campo ao formulário principal
-                    $(this).closest('form').append(novoCampo);
+                // Adiciona os campos do formFiltroVagas ao formulário atual
+                camposFiltros.forEach(campo => {
+                    console.log(campo.name)
+                    console.log(campo.value)
+                    $('<input>')
+                        .attr('type', 'hidden') // Oculto para não aparecer na interface
+                        .attr('name', campo.name)
+                        .val(campo.value)
+                        .appendTo($(this));
                 });
 
-                // Agora envia o formulário com os campos adicionais
-                $(this).unbind('submit').submit();
+                // Envia o formulário com os campos adicionais
+                this.submit();
             });
-
         });
     </script>
 </body>

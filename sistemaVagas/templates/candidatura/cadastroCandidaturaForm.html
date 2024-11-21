@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{% url 'cadastroCandidatura' id=vaga.id %}" class="cadastroCandidatura">
+                <form method="POST" action="{% url 'cadastro_candidatura' id=vaga.id %}" class="cadastroCandidatura">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="pretensaoSalarial-{{ vaga.id }}" class="form-label">Pretensão Salarial (R$)</label>

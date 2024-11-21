@@ -1,7 +1,7 @@
 body {
-    background: linear-gradient(45deg, #439A97, #62B6B7, #97DECE, #CBEDD5); /* Gradiente inicial */
-    background-size: 300% 300%; /* Permite que o gradiente se mova */
-    animation: colorAnimation 20s ease infinite; /* Animação com timing linear */
+    background: linear-gradient(45deg, #439A97, #62B6B7, #97DECE, #CBEDD5);
+    background-size: 300% 300%;
+    animation: colorAnimation 20s ease infinite;
     height: 100%;
     font-family: 'Poppins', Arial, sans-serif;
     color: #333;
@@ -9,15 +9,16 @@ body {
 
 @keyframes colorAnimation {
     0% {
-        background-position: 0% 50%; /* Posição inicial */
+        background-position: 0% 50%;
     }
     50% {
-        background-position: 100% 50%; /* Movimento para a direita */
+        background-position: 100% 50%;
     }
     100% {
-        background-position: 0% 50%; /* Retorna ao início */
+        background-position: 0% 50%;
     }
 }
+
 .chart-container {
     margin: 20px auto !important;
     max-width: 800px !important;
@@ -27,35 +28,33 @@ body {
     padding: 20px !important;
 }
 
-  .chart-title {
+.chart-title {
     text-align: center !important;
     font-family: 'Poppins', sans-serif !important;
     font-size: 20px !important;
     font-weight: 600 !important;
     margin-bottom: 15px !important;
-  }
+}
 
-  .chart {
+.chart {
     width: 100% !important;
     height: 400px !important;
-  }
+}
 
 .navbar {
     background: #fbffff !important;
 }
-/* Cor personalizada para o botão de cadastro */
+
 .btn-custom {
-    background-color: #FFA500; /* Cor laranja */
+    background-color: #FFA500;
     color: white;
-    border:none !important
+    border: none !important;
 }
 
 .btn-custom:hover {
-    background-color: #FF8C00; /* Cor mais escura quando passar o mouse */
+    background-color: #FF8C00;
 }
 
-
-/* Estilo para o campo de filtro */
 #filtroVaga {
     width: 100%;
     padding: 10px;
@@ -66,19 +65,12 @@ body {
     background-color: #fbffff;
 }
 
-/* Configurando uma nova fonte */
-body {
-    font-family: 'Poppins', Arial, sans-serif;
-    color: #333;
-}
-
 h2.textTitle {
     font-size: 2rem;
     font-weight: 600;
-    color: #064e3b; /* Verde escuro */
+    color: #064e3b;
 }
 
-/* Botões */
 button.btn-primary {
     border: none;
     border-radius: 5px;
@@ -86,49 +78,43 @@ button.btn-primary {
     color: white;
 }
 
-/* Estilo base do card */
 .card {
     background: #fbffff;
     border: none;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     overflow: auto;
-    max-height: 70vh; /* Define a altura máxima com rolagem */
+    max-height: 70vh;
     padding: 15px;
-    scroll-behavior: smooth; /* Suaviza o scroll ao usar botões ou teclas */
-
+    scroll-behavior: smooth;
 }
 
-/* Barra de rolagem personalizada para navegadores Webkit */
 ::-webkit-scrollbar {
-    width: 10px; /* Largura da barra de rolagem */
-    scrollbar-width: thin; /* Para navegadores que suportam */
-    scrollbar-color: #97DECE #EBF4F5; /* Cor do thumb e do track */
-    cursor:pointer
+    width: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #97DECE #EBF4F5;
+    cursor: pointer;
 }
 
 ::-webkit-scrollbar-track {
-    background: #EBF4F5; /* Cor do fundo do track */
-    border-radius: 10px; /* Bordas arredondadas */
+    background: #EBF4F5;
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #97DECE; /* Cor do thumb */
-    border-radius: 10px; /* Bordas arredondadas */
-    border: 2px solid #EBF4F5; /* Espaço entre o thumb e o track */
+    background: #97DECE;
+    border-radius: 10px;
+    border: 2px solid #EBF4F5;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #62B6B7; /* Cor do thumb ao passar o mouse */
+    background: #62B6B7;
 }
 
-/* Suaviza a transição ao rolar */
 .card {
-    scroll-behavior: smooth; /* Suaviza o scroll ao usar botões ou teclas */
+    scroll-behavior: smooth;
 }
 
-
-/* Informações da vaga */
 .card h5 {
     font-size: 1.25rem;
     font-weight: 500;
@@ -141,8 +127,6 @@ button.btn-primary {
     color: #555;
 }
 
-
-/* Gradiente no fundo */
 .container {
     background: #ebf4f5;
     padding: 20px;
@@ -150,30 +134,29 @@ button.btn-primary {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-
 .alert-container {
     position: fixed;
-    top: 0; /* Fixado no topo */
+    top: 0;
     left: 0;
-    width: 100%; /* Ocupa toda a largura da tela */
-    z-index: 9999; /* Fica acima de outros elementos */
-    text-align: center; /* Centraliza o texto */
-    pointer-events: none; /* Evita interferir na interação com os elementos abaixo */
+    width: 100%;
+    z-index: 9999;
+    text-align: center;
+    pointer-events: none;
 }
+
 .alert {
     display: inline-block;
     margin: 0 auto;
-    pointer-events: auto; /* Permite interações apenas na mensagem */
+    pointer-events: auto;
     padding: 15px;
-    margin-top: 10px; /* Remove margem adicional */
+    margin-top: 10px;
     font-size: 16px;
     font-weight: bold;
-    border-radius: 0; /* Remove bordas arredondadas */
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2); /* Adiciona sombra para destaque */
-    animation: slideDown 0.5s ease-out; /* Animação ao exibir */
+    border-radius: 0;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+    animation: slideDown 0.5s ease-out;
 }
 
-/* Animação de entrada */
 @keyframes slideDown {
     from {
         transform: translateY(-100%);

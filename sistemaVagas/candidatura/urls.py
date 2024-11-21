@@ -6,6 +6,6 @@ from . import views
 
 urlpatterns = [
 
-    path('candidatura/<int:id>/', views.cadastroCandidatura, name='cadastroCandidatura')
+    path('candidatura/<int:id>/', views.cadastroCandidatura, name='cadastro_candidatura')
 
 ]

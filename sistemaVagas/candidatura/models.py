@@ -30,3 +30,9 @@ class Candidatura(models.Model):
 
     def __str__(self):
         return f"Candidatura de {self.participanteId.nome} - Vaga {self.vagaId}"
+    
+    def format_pretensao_salarial(self):
+        return f"{self.pretensaoSalarial:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+
+    def format_pontos(self):
+        return int(self.pontos)

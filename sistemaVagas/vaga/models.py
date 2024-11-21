@@ -65,3 +65,7 @@ class Vaga(models.Model):
             self.save()  # Salva as alterações no banco de dados
             return True
         return False  # Retorna False se a vaga já estiver inativa
+   
+    @property
+    def candidaturas(self):
+        return self.candidatura_set.all()

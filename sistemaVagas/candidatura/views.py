@@ -6,12 +6,14 @@ from vaga.models import Vaga
 from .models import Candidatura
 from django.db.models import Q
 from participante.models import Participante
-
+from django.http import QueryDict
+from sistemaVagas.functions import filtrosVaga
 
 @login_required
 def cadastroCandidatura(request,id):
+    filtros = filtrosVaga(request) 
     if request.method == 'POST':
-        idParticipante = request.session.get('participanteId')
+        idParticipante = request.session.get('participante_id')
         ultimaEscolaridade = request.POST.get('ultimaEscolaridade').strip()
         pretensaoSalarial = request.POST.get('pretensaoSalarial').strip()
         experiencia = request.POST.get('experiencia').strip()
@@ -59,13 +61,19 @@ def cadastroCandidatura(request,id):
             )
             candidatura.save()
             messages.success(request,"Candidatura feita com sucesso!")
-            return redirect(reverse('vagas'))
+            query_params = QueryDict(mutable=True)
+            query_params.update(filtros)
+            return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
 
         except Exception as e:
             messages.error(request,f"{str(e)}")
-            return redirect(reverse('vagas'))
+            query_params = QueryDict(mutable=True)
+            query_params.update(filtros)
+            return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
     else:
-        return redirect(reverse('vagas'))
+        query_params = QueryDict(mutable=True)
+        query_params.update(filtros)
+        return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
 
 
 

@@ -113,6 +113,7 @@ def logon_view(request):
         cpf = request.POST['cpf'].strip()
         celular = request.POST['celular'].strip()
         codigo_pais = request.POST['codigoPais'].strip()
+        codigo_pais_alfa = request.POST['codigoPaisAlfa'].strip()
         email = request.POST['email'].strip()
         senha = request.POST['senha'].strip()
         confirm_senha = request.POST['confirm_senha'].strip()
@@ -124,6 +125,7 @@ def logon_view(request):
             'cpf': cpf,
             'celular': celular,
             'codigo_pais': codigo_pais,
+            'codigo_pais_alfa':codigo_pais_alfa,
             'email': email,
             'senha': senha,
             'confirm_senha': confirm_senha,
@@ -181,10 +183,12 @@ def logon_view(request):
             'cpf': ultima_tentativa_logon.get('cpf'),
             'celular': ultima_tentativa_logon.get('celular'),
             'codigo_pais': ultima_tentativa_logon.get('codigo_pais'),
+            'codigo_pais_alfa': ultima_tentativa_logon.get('codigo_pais_alfa'),
             'email': ultima_tentativa_logon.get('email'),
             'senha': ultima_tentativa_logon.get('senha'),
             'confirm_senha': ultima_tentativa_logon.get('confirm_senha'),
-            'data_nascimento': ultima_tentativa_logon.get('data_nascimento')
+            'data_nascimento': ultima_tentativa_logon.get('data_nascimento'),
+            'indicador_pcd': ultima_tentativa_logon.get('indicador_pcd')
         }
         return render(request, 'participante/logon.html', context=context)
 

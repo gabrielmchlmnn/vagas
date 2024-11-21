@@ -23,3 +23,5 @@ class Participante(models.Model):
     def check_password(self, senhaDigitada):
         return check_password(senhaDigitada, self.senha)
 
+    def format_cpf(self):
+        return f"{self.cpf[:3]}.{self.cpf[3:6]}.{self.cpf[6:9]}-{self.cpf[9:]}"

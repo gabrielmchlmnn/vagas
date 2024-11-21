@@ -27,6 +27,9 @@
                     <small>Data de Publicação: {{ vaga.dataPublicacao|date:"d/m/Y" }}</small>
                     {% if sessao and superUser == True %}
                         <div>
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#consultarInscricoesModal-{{ vaga.id }}">
+                                Ver inscrições
+                            </button>
                             <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal-{{ vaga.id }}">
                                 Editar
                             </button>
@@ -39,6 +42,7 @@
 
             </a>
             {% if sessao and superUser == True %}
+                {% include 'candidatura/consultaCandidatura.html' %}
                 {% include 'vagas/editarVagas.html' %}
                 {% include 'vagas/inativarVagas.html' %}
             {% endif %}

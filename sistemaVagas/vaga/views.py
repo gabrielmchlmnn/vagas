@@ -1,19 +1,24 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.http import JsonResponse
-from django.template.loader import render_to_string
-from django.db.models import Count
+from django.db.models import Count,Prefetch
 from django.urls import reverse
 from datetime import date
+from candidatura.models import Candidatura
 from .models import Vaga
 from sistemaVagas.functions import aplicaFiltrosVaga, filtrosVaga
-from django.views.decorators.csrf import csrf_exempt
 from sistemaVagas.decorators import login_required,admin_required
+from django.http import QueryDict
+
 # Exibe a lista de vagas
 def listar_vagas(request):
     sessao_ativa = 'participante_id' in request.session
     superusuario = request.session.get('is_superuser', False)
-    vagas = Vaga.objects.filter(aplicaFiltrosVaga(request)).annotate(qtd_participantes=Count('candidatura'))
+    vagas = Vaga.objects.filter(aplicaFiltrosVaga(request)
+            ).annotate(qtd_participantes=Count('candidatura')
+            ).prefetch_related(
+                Prefetch('candidatura_set', queryset=Candidatura.objects.select_related('participanteId'))
+            )
+
     filtros = filtrosVaga(request)
     context = {
         'vagas': vagas,
@@ -30,6 +35,9 @@ def listar_vagas(request):
 @login_required
 @admin_required
 def cadastrar_vaga(request):
+    filtros = filtrosVaga(request)      
+    query_params = QueryDict(mutable=True)
+    query_params.update(filtros)
     if request.method == 'POST':
         descricao = request.POST['descricao'].strip()
         faixa_salarial = request.POST['faixaSalarial'].strip()
@@ -51,55 +59,40 @@ def cadastrar_vaga(request):
             )
             vaga.save()
             messages.success(request, "Vaga cadastrada com sucesso!")
-            return redirect(reverse('vagas'))
+            # Redirecionar com os filtros na URL
+            return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
         except Exception as e:
             messages.error(request, "Não foi possível cadastrar esta vaga!")
-            return redirect(reverse('vagas'))
+            return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
     else:
-        return redirect(reverse('vagas'))
-
-# Filtra as vagas com base nos parâmetros fornecidos
-@csrf_exempt
-def filtrar_vagas(request):
-    sessao_ativa = 'participante_id' in request.session
-    superusuario = request.session.get('is_superuser', False)
-
-    if request.method == 'GET':
-        vagas = Vaga.objects.filter(aplicaFiltrosVaga(request)).annotate(qtd_participantes=Count('candidatura'))
-        context = {
-            'vagas': vagas,
-            'superUser': superusuario,
-            'sessao': sessao_ativa,
-            "modalidades": Vaga.Modalidade.choices,
-            "faixa_salarios": Vaga.FaixasSalario.choices,
-            "escolaridades": Vaga.Escolaridade.choices
-        }
-        vagas_html = render_to_string('vagas/listaVagas.html', context=context)
-
-        return JsonResponse({'vagas': vagas_html})
-    else:
-        return JsonResponse({'erro': 'Método não permitido'}, status=405)
-
+        return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
 # Inativa uma vaga existente
 @login_required
 @admin_required
 def inativar_vaga(request, id):
+    filtros = filtrosVaga(request)      
+    query_params = QueryDict(mutable=True)
+    query_params.update(filtros)
     try:
         vaga = Vaga.objects.get(id=id)
         vaga.inativar()
         messages.success(request, "Vaga inativada com sucesso!")
-        return redirect(reverse('vagas'))
+        # Redirecionar com os filtros na URL
+        return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
     except Vaga.DoesNotExist:
-        messages.error(request, "Vaga não encontrada!")
-        return redirect(reverse('vagas'))
+        messages.error(request, "Vaga não encontrada!")        
+        return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
     except Exception as e:
         messages.error(request, f"Erro ao inativar vaga: {e}")
-        return redirect(reverse('vagas'))
-
+        return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
+    
 # Edita uma vaga existente
 @login_required
 @admin_required
 def editar_vaga(request, id):
+    filtros = filtrosVaga(request)   
+    query_params = QueryDict(mutable=True)
+    query_params.update(filtros)   
     if request.method == 'POST':
         try:
             descricao = request.POST['descricao'].strip()
@@ -115,13 +108,16 @@ def editar_vaga(request, id):
                 escolaridade=escolaridade,
                 modalidade=modalidade
             )
-            messages.success(request, "Vaga editada com sucesso!")
-            return redirect(reverse('vagas'))
+            messages.success(request, "Vaga editada com sucesso!")            
+            # Redirecionar com os filtros na URL
+            return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
+        
         except Vaga.DoesNotExist:
             messages.error(request, "Vaga não encontrada!")
-            return redirect(reverse('vagas'))
+            return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")        
+        
         except Exception as e:
             messages.error(request, f"Erro ao editar vaga: {e}")
-            return redirect(reverse('vagas'))
+            return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
     else:
-        return redirect(reverse('vagas'))
+        return redirect(f"{reverse('vagas')}?{query_params.urlencode()}")
