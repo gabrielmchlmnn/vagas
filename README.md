@@ -1,7 +1,7 @@
 
 # Sistema de Vagas
 
-## 📂 Clonando o Repositório
+## 📂 Clonando o Repositório:
 
 1. **Clonar o repositório**:  
    ```bash
