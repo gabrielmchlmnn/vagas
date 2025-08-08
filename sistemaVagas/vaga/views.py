@@ -9,6 +9,7 @@ from sistemaVagas.functions import aplicaFiltrosVaga, filtrosVaga
 from sistemaVagas.decorators import login_required,admin_required
 from django.http import QueryDict
 
+# teste 3
 # Exibe a lista de vagas
 def listar_vagas(request):
     sessao_ativa = 'participante_id' in request.session
